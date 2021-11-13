@@ -2,29 +2,47 @@ const Benchmark = require('benchmark');
 
 const model = [];
 const tests = [];
+const benchmarks = [];
 
 function setModel(...args) {
   model.length = tests.length = 0;
   model.push(...args);
 }
 
-function addTest(data) {
-  tests.push(model.length ? model.map(key => data[key]) : [data]);
+function addTest(data) { addCase(tests, data) }
+function addBenchmark(data) { addCase(benchmarks, data) }
+function getTests() { return tests }
+function getBenchmarks() { return benchmarks }
+
+function addCase(set, data) {
+  set.push(model.length ? model.map(key => data[key]) : [data]);
 }
 
-function getTests() { return tests }
+function randFloat(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
-function randNum(min, max) {
+function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function randStr(len) {
-  const charCodes = Array(len).fill().map(() => randNum(97, 122));
+  const charCodes = Array(len).fill().map(() => randInt(97, 122));
   return String.fromCharCode(...charCodes);
 }
 
 function log(message, colorCode) {
   console.log('\x1b[' + colorCode + 'm' + message + '\x1b[39m');
+}
+
+function runTests(candidates, preprocessor) {
+  tests.forEach(test => runTest(candidates, preprocessor, ...test));
+}
+
+function runBenchmarks(candidates, preprocessor) {
+  benchmarks.forEach(benchmark => {
+    runBenchmark(candidates, preprocessor, ...benchmark);
+  });
 }
 
 function runTest(candidates, preprocessor, ...args) {
@@ -59,9 +77,12 @@ module.exports = {
   setModel,
   addTest,
   getTests,
-  runTest,
-  runBenchmark,
+  addBenchmark,
+  getBenchmarks,
+  runTests,
+  runBenchmarks,
   log,
-  randNum,
+  randFloat,
+  randInt,
   randStr
 };
