@@ -1,10 +1,12 @@
 {
   "dependencies": {
     "benchmark": "^2.1.4",
+    "gpu.js": "^2.11.3",
     "js-yaml": "^4.1.0",
     "json-6": "^1.1.2",
     "json5": "^2.2.0",
     "jsox": "^1.2.108",
+    "timsort": "^0.3.0",
     "yaml": "^1.10.2",
     "yaml-js": "^0.2.3"
   }
