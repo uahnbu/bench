@@ -1,4 +1,10 @@
-const { setModel, addTest, randNum, randStr } = require('../ground');
+const {
+  setModel,
+  addTest,
+  addBenchmark,
+  randInt,
+  randStr
+} = require('../ground');
 const YAML = require('yaml');
 const JSYAML = require('js-yaml');
 const JSON5 = require('json5');
@@ -40,7 +46,7 @@ module.exports = {
         ? Array(3).fill().map(() => generate(3, 3))
         : generate(3, 5)
     );
-    addTest(
+    addBenchmark(
       Math.random() < .5
         ? Array(9).fill().map(() => generate(4, 4))
         : generate(5, 9)
@@ -108,12 +114,12 @@ function generate(size, depth, lvl = 0, obj = {}) {
 }
 
 function rand(min, max, len, size, depth, lvl) {
-  switch (randNum(1, 4)) {
-    case 1: return randNum(min, max);
+  switch (randInt(1, 4)) {
+    case 1: return randInt(min, max);
     case 2: return randStr(len);
     case 3:
       if (lvl === depth) return randStr(len);
-      return arr = Array(randNum(0, size)).fill().map(() =>
+      return arr = Array(randInt(0, size)).fill().map(() =>
         rand(min, max, len, size, depth, lvl + 1)
       );
     default:

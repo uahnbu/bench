@@ -1,4 +1,4 @@
-const { setModel, addTest, randNum, randStr } = require('../ground');
+const { setModel, addTest, addBenchmark, randInt } = require('../ground');
 
 module.exports = {
   opening: 'SHIFT POP VS. QUEUE',
@@ -9,6 +9,7 @@ module.exports = {
         arr[i][0] && (a[a.length] = arr[i][1]);
         !arr[i][0] && a.shift();
       }
+      // console.log(a);
       return a.length;
     },
     'Queue': arr => {
@@ -17,19 +18,28 @@ module.exports = {
         arr[i][0] && a.enqueue(arr[i][1]);
         !arr[i][0] && a.dequeue();
       }
+      // console.log(a.list.slice(-a.size));
       return a.size;
     }
   },
   buildTest() {
     setModel();
-    addTest(Array(100).fill().map(() => [
-      Math.random() < .5,
-      Math.random() * Number.MAX_SAFE_INTEGER | 0
-    ]));
-    addTest(Array(10000).fill().map(() => [
-      Math.random() < .5,
-      Math.random() * Number.MAX_SAFE_INTEGER | 0
-    ]));
+    addTest(
+      Array(10).fill()
+        .map(() => [Math.random() < .5, randInt(-100, 100)])
+    );
+    addBenchmark(
+      Array(1e4).fill()
+        .map(() => [Math.random() < .5, randInt(-1e15, 1e15)])
+    );
+    addBenchmark(
+      Array(1e5).fill()
+        .map(() => [Math.random() < .5, randInt(-1e15, 1e15)])
+    );
+    addBenchmark(
+      Array(1e5).fill()
+        .map(() => [Math.random() < .5, randInt(-1e5, 1e5)])
+    );
   }
 };
 
@@ -42,10 +52,11 @@ function Queue(mylist = []) {
     last: { get: () => index < list.length ? list[list.length - 1] : null },
     list: { get: () => list }
   });
-  this.dequeue = () => index < list.length ? list[index++] : (list.length = index = 0, null);
+  this.dequeue = () => index < list.length
+    ? list[index++]
+    : (list.length = index = 0, null);
   this.enqueue = function(item) {
-    list[list.length] = item;
-    return this;
+    return list[list.length] = item, this;
   };
   this.pop = function() {
     if (index >= list.length) return null;

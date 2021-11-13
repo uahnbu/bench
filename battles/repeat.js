@@ -1,4 +1,10 @@
-const { setModel, addTest, randNum, randStr } = require('../ground');
+const {
+  setModel,
+  addTest,
+  addBenchmark,
+  randInt,
+  randStr
+} = require('../ground');
 
 module.exports = {
   opening: 'STRING REPETITION',
@@ -10,11 +16,11 @@ module.exports = {
     setModel('word', 'times');
     addTest({
       word: randStr(50) + ',',
-      times: randNum(10, 20)
+      times: randInt(10, 20)
     });
-    addTest({
+    addBenchmark({
       word: randStr(1000),
-      times: randNum(1000, 2000)
+      times: randInt(1000, 2000)
     });
   }
 };

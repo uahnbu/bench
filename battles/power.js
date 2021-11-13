@@ -1,4 +1,4 @@
-const { setModel, addTest } = require('../ground');
+const { setModel, addTest, addBenchmark, randInt } = require('../ground');
 
 module.exports = {
   opening: '15-POWERING',
@@ -31,8 +31,8 @@ module.exports = {
   },
   buildTest() {
     setModel();
-    addTest([987654321987654321]);
-    addTest(Array(100).fill().map(() => Math.floor(Math.random() * 1e16)))
+    addTest([randInt(1e15, 1e20)]);
+    addBenchmark(Array(100).fill().map(() => randInt(1e9, 1e15)));
   }
 }
 

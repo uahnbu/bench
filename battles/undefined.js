@@ -1,4 +1,4 @@
-const { setModel, addTest } = require('../ground');
+const { setModel, addBenchmark, randInt } = require('../ground');
 
 module.exports = {
   opening: 'UNDEFINED',
@@ -8,6 +8,6 @@ module.exports = {
   },
   buildTest() {
     setModel();
-    addTest('' + Math.floor(Math.random() * 1e16));
+    addBenchmark('' + randInt(0, 1e15));
   }
 }
