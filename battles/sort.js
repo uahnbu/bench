@@ -24,6 +24,11 @@ module.exports = {
       const clone = [...nums];
       timSort(clone);
       return clone;
+    },
+    'QuickSort': nums => {
+      const clone = [...nums];
+      quickSort(clone);
+      return clone;
     }
   },
   buildTest() {
@@ -38,6 +43,19 @@ module.exports = {
     );
   }
 };
+
+// QuickSort is unstable.
+function quickSort(arr, left = 0, right = ~-arr.length) {
+  if (arr.length <= 1) return;
+  let pivot = arr[right + left >> 1];
+  let i = left, j = right, tmp;
+  while (i <= j) {
+    while (arr[i] < pivot) i++; while (arr[j] > pivot) j--;
+    i <= j && (tmp = arr[i], arr[i++] = arr[j], arr[j--] = tmp);
+  }
+  left < ~-i && quickSort(arr, left, ~-i);
+  i < right && quickSort(arr, i, right);
+}
 
 const MIN_MERGE = 32;
  
