@@ -22,7 +22,7 @@ module.exports = {
     'JSYAML': obj => JSYAML.dump(obj),
     'Custom YAML': obj => yamlify(obj)
   },
-  preprocessor: args => JSOX.stringify(args),
+  makeup: args => JSOX.stringify(args),
   buildTest() {
     setModel();
     const test1 = [
