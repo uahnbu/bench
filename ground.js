@@ -35,31 +35,28 @@ function log(message, colorCode) {
   console.log('\x1b[' + colorCode + 'm' + message + '\x1b[39m');
 }
 
-function runTests(candidates, preprocessor) {
-  tests.forEach(test => runTest(candidates, preprocessor, ...test));
+function runTests(candidates, makeup) {
+  tests.forEach(test => runTest(candidates, makeup, test));
 }
 
-function runBenchmarks(candidates, preprocessor) {
+function runBenchmarks(candidates, makeup) {
   benchmarks.forEach(benchmark => {
-    runBenchmark(candidates, preprocessor, ...benchmark);
+    runBenchmark(candidates, makeup, benchmark);
   });
 }
 
-function runTest(candidates, preprocessor, ...args) {
+function runTest(candidates, makeup, args) {
   log('Test case ' + (runTest.index = 1 + ~~runTest.index) + ':', 35);
-  console.log(preprocessor?.(args) || args);
-  for (const id in candidates) {
-    log('Candidate: ' + id, 33);
-    try {
-      console.log(candidates[id](...args));
-    } catch(e) { console.error(e) }
-  }
+  console.log(makeup?.(args) || args);
+  runCheck(candidates, args, true);
 }
 
-function runBenchmark(candidates, preprocessor, ...args) {
+function runBenchmark(candidates, makeup, args) {
   const suite = new Benchmark.Suite;
   log('Benchmark case:', 35);
-  console.log(preprocessor?.(args) || args);
+  console.log(makeup?.(args) || args);
+  log('Checking outputs...', 35);
+  runCheck(candidates, args, false);
   log('Benchmarking...', 35);
   for (const id in candidates) {
     suite.add(id, () => candidates[id](...args))
@@ -71,6 +68,26 @@ function runBenchmark(candidates, preprocessor, ...args) {
       console.log('Fastest is ' + fastest);
     })
     .run();
+}
+
+function runCheck(candidates, args, verbose) {
+  const results = Object.keys(candidates).map((id, result) => {
+    verbose && log('Candidate: ' + id, 33);
+    try {
+      result = candidates[id](...args);
+      verbose && console.log(result);
+    } catch(e) { console.error(e) }
+    return { id, result };
+  });
+  const groups = results.reduce((groups, { id, result }) => {
+    return (groups[result] ||= []).push(id), groups;
+  }, {});
+  const groupLen = Object.keys(groups).length;
+  if (groupLen !== 1) {
+    const memberList = Object.values(groups).map(group => group.join(', '));
+    const groupList = memberList.join(' | ');
+    log(`Outputs are different (${groupLen} groups: ${groupList})`, 31);
+  } else log('Outputs are identical', 32);
 }
 
 module.exports = {
