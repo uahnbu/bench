@@ -27,7 +27,12 @@ module.exports = {
     },
     'QuickSort': nums => {
       const clone = [...nums];
-      quickSort(clone, (a, b) => b - a);
+      quickSortMid(clone, (a, b) => b - a);
+      return clone;
+    },
+    'QuickSortMed3': nums => {
+      const clone = [...nums];
+      quickSortMed3(clone, (a, b) => b - a);
       return clone;
     },
     'IntroSort': nums => {
@@ -100,7 +105,7 @@ function quickSortOld(arr, cp, lo = 0, hi = ~-arr.length) {
   i < hi && quickSortOld(arr, cp, i, hi);
 }
 
-function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
+function quickSortMid(arr, cp, lo = 0, hi = ~-arr.length) {
   if (arr.length < 2) return;
   let pivot = lo + hi >> 1, tmp = arr[pivot];
   arr[pivot] = arr[hi], arr[hi] = tmp, pivot = lo;
@@ -110,8 +115,34 @@ function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
     ++pivot;
   }
   tmp = arr[pivot], arr[pivot] = arr[hi], arr[hi] = tmp;
-  lo < ~-pivot && quickSort(arr, cp, lo, ~-pivot);
-  -~pivot < hi && quickSort(arr, cp, -~pivot, hi);
+  lo < ~-pivot && quickSortMid(arr, cp, lo, ~-pivot);
+  -~pivot < hi && quickSortMid(arr, cp, -~pivot, hi);
+}
+
+function quickSortMed3(arr, cp, lo = 0, hi = ~-arr.length) {
+  if (arr.length < 2) return;
+  let pivot = lo + hi >> 1;
+  if (-~lo === hi) pivot = lo; else {
+    const lm = cp(arr[lo], arr[pivot]) < 0;
+    const mh = cp(arr[pivot], arr[hi]) < 0;
+    if (lm && !mh) {
+      if (cp(arr[lo], arr[hi]) < 0) pivot = hi;
+      else pivot = lo;
+    } else if (!lm && mh) {
+      if (cp(arr[lo], arr[hi]) < 0) pivot = lo;
+      else pivot = hi;
+    }
+  }
+  let tmp = arr[pivot];
+  arr[pivot] = arr[hi], arr[hi] = tmp, pivot = lo;
+  for (let i = lo; i < hi; ++i) {
+    if (cp(arr[i], arr[hi]) >= 0) continue;
+    i !== pivot && (tmp = arr[i], arr[i] = arr[pivot], arr[pivot] = tmp);
+    ++pivot;
+  }
+  tmp = arr[pivot], arr[pivot] = arr[hi], arr[hi] = tmp;
+  lo < ~-pivot && quickSortMed3(arr, cp, lo, ~-pivot);
+  -~pivot < hi && quickSortMed3(arr, cp, -~pivot, hi);
 }
 
 function introSort(
