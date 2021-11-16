@@ -2,7 +2,7 @@ const { setModel, addTest, addBenchmark, randInt } = require('../ground');
 const TimSort = require('timsort');
 
 module.exports = {
-  opening: 'SORT BATTLE FOR 32-BIT INTEGERS',
+  opening: 'SORT BATTLE FOR 32-BIT UNSIGNED INTEGERS',
   candidates: {
     'Default': nums => {
       const clone = [...nums];

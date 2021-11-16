@@ -8,7 +8,7 @@ const {
 const TimSort = require('timsort');
 
 module.exports = {
-  opening: 'TIMSORT VS. DEFAULT SORT',
+  opening: 'SORT BATTLE FOR 64-BIT SIGNED INTEGERS',
   candidates: {
     'Default': nums => {
       const clone = [...nums];

@@ -370,6 +370,7 @@ Fastest is Shift Pop
 ```javascript
 > node app sort
 
+<================SORT BATTLE FOR 64-BIT SIGNED INTEGERS================>
 Test case 1:
 [
   [
@@ -562,7 +563,7 @@ Fastest is IntroSort
 ```javascript
 > node app sortint
 
-<================SORT BATTLE FOR 32-BIT INTEGERS================>
+<================SORT BATTLE FOR 32-BIT UNSIGNED INTEGERS================>
 Test case 1:
 [
   [
