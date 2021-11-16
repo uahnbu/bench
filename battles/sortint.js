@@ -2,7 +2,7 @@ const { setModel, addTest, addBenchmark, randInt } = require('../ground');
 const TimSort = require('timsort');
 
 module.exports = {
-  opening: 'SORT BATTLE FOR 32-BIT UNSIGNED INTEGERS',
+  opening: 'SORT 32-BIT UNSIGNED INTEGERS',
   candidates: {
     'Default': nums => {
       const clone = [...nums];
@@ -16,7 +16,7 @@ module.exports = {
     },
     'QuickSort': nums => {
       const clone = [...nums];
-      quickSort(clone);
+      quickSort(clone, (a, b) => a - b);
       return clone;
     },
     'RadixSort': nums => {
@@ -33,23 +33,25 @@ module.exports = {
   buildTest() {
     setModel();
     addTest(Array(10).fill().map(() => randInt(0, 1e5)));
-    addBenchmark(Array(10).fill().map(() => randInt(0, 1e3)));
+    addBenchmark(Array(100).fill().map(() => randInt(0, 1e3)));
     addBenchmark(Array(1e3).fill().map(() => randInt(0, 1e3)));
     addBenchmark(Array(1e5).fill().map(() => randInt(0, 1e5)));
     addBenchmark(Array(1e6).fill().map(() => randInt(0, 2e9)));
   }
 };
 
-function quickSort(arr, lo = 0, hi = ~-arr.length) {
+function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
   if (arr.length < 2) return;
-  const pivot = arr[hi + lo >> 1];
-  let i = lo, j = hi, tmp;
-  while (i <= j) {
-    while (arr[i] < pivot) ++i; while (arr[j] > pivot) --j;
-    i <= j && (tmp = arr[i], arr[i++] = arr[j], arr[j--] = tmp);
+  let pivot = lo + hi >> 1, tmp = arr[pivot];
+  arr[pivot] = arr[hi], arr[hi] = tmp, pivot = lo;
+  for (let i = lo; i < hi; ++i) {
+    if (cp(arr[i], arr[hi]) >= 0) continue;
+    i !== pivot && (tmp = arr[i], arr[i] = arr[pivot], arr[pivot] = tmp);
+    ++pivot;
   }
-  lo < ~-i && quickSort(arr, lo, ~-i);
-  i < hi && quickSort(arr, i, hi);
+  tmp = arr[pivot], arr[pivot] = arr[hi], arr[hi] = tmp;
+  lo < ~-pivot && quickSort(arr, cp, lo, ~-pivot);
+  -~pivot < hi && quickSort(arr, cp, -~pivot, hi);
 }
 
 function radixSort(arr) {

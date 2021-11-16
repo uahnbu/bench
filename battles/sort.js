@@ -8,7 +8,7 @@ const {
 const TimSort = require('timsort');
 
 module.exports = {
-  opening: 'SORT BATTLE FOR 64-BIT SIGNED INTEGERS',
+  opening: 'SORT FLOAT NUMBERS',
   candidates: {
     'Default': nums => {
       const clone = [...nums];
@@ -18,6 +18,11 @@ module.exports = {
     'TimSort': nums => {
       const clone = [...nums];
       TimSort.sort(clone, (a, b) => b - a);
+      return clone;
+    },
+    'QuickSortOld': nums => {
+      const clone = [...nums];
+      quickSortOld(clone, (a, b) => b - a);
       return clone;
     },
     'QuickSort': nums => {
@@ -34,34 +39,79 @@ module.exports = {
   buildTest() {
     setModel();
     addTest(Array(100).fill().map(() => randInt(-100, 100)));
+    addTest(Array(100).fill().map(() => randInt(-100, 100)));
+    // Ascending
     addTest(
       Array(10).fill()
         .map(() => randInt(-1e5, 1e5))
         .sort((a, b) => a - b)
     );
-    addTest(Array(1e6).fill().map(() => randInt(-1e6, 1e6)));
+    // Descending saw
+    const test4 = Array(100).fill().map(() => randInt(-100, 100));
+    for (let i = 0, t; i < test4.length - 1;) {
+      const right = Math.min(test4.length - 1, i + randInt(1, 10));
+      dummySort(test4, (a, b) => b - a, i, i = right);
+    }
+    addTest(test4);
     addBenchmark(Array(50).fill().map(() => randInt(-1e3, 1e3)));
     addBenchmark(Array(1e6).fill().map(() => randFloat(-1e15, 1e15)));
+    // Ascending
     addBenchmark(
       Array(1e6).fill()
         .map(() => randInt(-1e5, 1e5))
         .sort((a, b) => a - b)
     );
+    // Descending saw
+    const test8 = Array(1e6).fill().map(() => randFloat(-1e15, 1e15));
+    for (let i = 0, t; i < test4.length - 1;) {
+      const right = Math.min(test8.length - 1, i + randInt(1e3, 1e5));
+      dummySort(test8, (a, b) => b - a, i, i = right);
+    }
+    addBenchmark(test8);
   }
 };
 
-// QuickSort is unstable.
-function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
+// To prevent altering the performance of other functions.
+function dummySort(arr, cp, lo = 0, hi = ~-arr.length) {
   if (arr.length < 2) return;
-  const pivot = arr[hi + lo >> 1];
+  let pivot = lo + hi >> 1, tmp = arr[pivot];
+  arr[pivot] = arr[hi], arr[hi] = tmp, pivot = lo;
+  for (let i = lo; i < hi; ++i) {
+    if (cp(arr[i], arr[hi]) >= 0) continue;
+    i !== pivot && (tmp = arr[i], arr[i] = arr[pivot], arr[pivot] = tmp);
+    ++pivot;
+  }
+  tmp = arr[pivot], arr[pivot] = arr[hi], arr[hi] = tmp;
+  lo < ~-pivot && dummySort(arr, cp, lo, ~-pivot);
+  -~pivot < hi && dummySort(arr, cp, -~pivot, hi);
+}
+
+// QuickSort is unstable.
+function quickSortOld(arr, cp, lo = 0, hi = ~-arr.length) {
+  if (arr.length < 2) return;
+  const pivot = arr[lo + hi >> 1];
   let i = lo, j = hi, tmp;
   while (i <= j) {
     while (cp(arr[i], pivot) < 0) ++i;
     while (cp(arr[j], pivot) > 0) --j;
     i <= j && (tmp = arr[i], arr[i++] = arr[j], arr[j--] = tmp);
   }
-  lo < ~-i && quickSort(arr, cp, lo, ~-i);
-  i < hi && quickSort(arr, cp, i, hi);
+  lo < ~-i && quickSortOld(arr, cp, lo, ~-i);
+  i < hi && quickSortOld(arr, cp, i, hi);
+}
+
+function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
+  if (arr.length < 2) return;
+  let pivot = lo + hi >> 1, tmp = arr[pivot];
+  arr[pivot] = arr[hi], arr[hi] = tmp, pivot = lo;
+  for (let i = lo; i < hi; ++i) {
+    if (cp(arr[i], arr[hi]) >= 0) continue;
+    i !== pivot && (tmp = arr[i], arr[i] = arr[pivot], arr[pivot] = tmp);
+    ++pivot;
+  }
+  tmp = arr[pivot], arr[pivot] = arr[hi], arr[hi] = tmp;
+  lo < ~-pivot && quickSort(arr, cp, lo, ~-pivot);
+  -~pivot < hi && quickSort(arr, cp, -~pivot, hi);
 }
 
 function introSort(
@@ -70,7 +120,7 @@ function introSort(
 ) {
   if (hi - lo <= 16) return insertionSort(arr, cp, lo, hi);
   if (lim === 0) return heapSort(arr, cp, lo, hi);
-  const pivot = arr[hi + lo >> 1];
+  const pivot = arr[lo + hi >> 1];
   let i = lo, j = hi, tmp;
   while (i <= j) {
     while (cp(arr[i], pivot) < 0) ++i;
