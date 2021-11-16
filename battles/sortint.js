@@ -23,25 +23,33 @@ module.exports = {
       const clone = [...nums];
       radixSort(clone);
       return clone;
+    },
+    'CountingSort': nums => {
+      const clone = [...nums];
+      countingSort(clone);
+      return clone;
     }
   },
   buildTest() {
     setModel();
     addTest(Array(10).fill().map(() => randInt(0, 1e5)));
+    addBenchmark(Array(10).fill().map(() => randInt(0, 1e3)));
+    addBenchmark(Array(1e3).fill().map(() => randInt(0, 1e3)));
+    addBenchmark(Array(1e5).fill().map(() => randInt(0, 1e5)));
     addBenchmark(Array(1e6).fill().map(() => randInt(0, 2e9)));
   }
 };
 
-function quickSort(arr, left = 0, right = ~-arr.length) {
-  if (arr.length <= 1) return;
-  let pivot = arr[right + left >> 1];
-  let i = left, j = right, tmp;
+function quickSort(arr, lo = 0, hi = ~-arr.length) {
+  if (arr.length < 2) return;
+  const pivot = arr[hi + lo >> 1];
+  let i = lo, j = hi, tmp;
   while (i <= j) {
-    while (arr[i] < pivot) i++; while (arr[j] > pivot) j--;
+    while (arr[i] < pivot) ++i; while (arr[j] > pivot) --j;
     i <= j && (tmp = arr[i], arr[i++] = arr[j], arr[j--] = tmp);
   }
-  left < ~-i && quickSort(arr, left, ~-i);
-  i < right && quickSort(arr, i, right);
+  lo < ~-i && quickSort(arr, lo, ~-i);
+  i < hi && quickSort(arr, i, hi);
 }
 
 function radixSort(arr) {
@@ -56,5 +64,13 @@ function radixSort(arr) {
     }
     [prev, curr] = [curr, prev];
   }
-  return arr;
+}
+
+function countingSort(arr) {
+  const counter = arr.reduce((c, e) => (c[e] = (c[e] || 0) + 1, c), []);
+  let i = 0;
+  for (const e in counter) {
+    const num = +e;
+    do {} while (arr[i++] = num, --counter[e] !== 0);
+  }
 }

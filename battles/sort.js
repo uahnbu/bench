@@ -12,111 +12,105 @@ module.exports = {
   candidates: {
     'Default': nums => {
       const clone = [...nums];
-      clone.sort((a, b) => a - b);
+      clone.sort((a, b) => b - a);
       return clone;
     },
     'TimSort': nums => {
       const clone = [...nums];
-      TimSort.sort(clone, (a, b) => a - b);
-      return clone;
-    },
-    'Custom TimSort': nums => {
-      const clone = [...nums];
-      timSort(clone);
+      TimSort.sort(clone, (a, b) => b - a);
       return clone;
     },
     'QuickSort': nums => {
       const clone = [...nums];
-      quickSort(clone);
+      quickSort(clone, (a, b) => b - a);
+      return clone;
+    },
+    'IntroSort': nums => {
+      const clone = [...nums];
+      introSort(clone, (a, b) => b - a);
       return clone;
     }
   },
   buildTest() {
     setModel();
-    addTest(Array(10).fill().map(() => randInt(-100, 100)));
-    addBenchmark(Array(1e4).fill().map(() => randInt(-1e5, 1e5)));
+    addTest(Array(100).fill().map(() => randInt(-100, 100)));
+    addTest(
+      Array(10).fill()
+        .map(() => randInt(-1e5, 1e5))
+        .sort((a, b) => a - b)
+    );
+    addTest(Array(1e6).fill().map(() => randInt(-1e6, 1e6)));
+    addBenchmark(Array(50).fill().map(() => randInt(-1e3, 1e3)));
     addBenchmark(Array(1e6).fill().map(() => randFloat(-1e15, 1e15)));
     addBenchmark(
       Array(1e6).fill()
         .map(() => randInt(-1e5, 1e5))
-        .sort((a, b) => b - a)
+        .sort((a, b) => a - b)
     );
   }
 };
 
 // QuickSort is unstable.
-function quickSort(arr, left = 0, right = ~-arr.length) {
-  if (arr.length <= 1) return;
-  let pivot = arr[right + left >> 1];
-  let i = left, j = right, tmp;
+function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
+  if (arr.length < 2) return;
+  const pivot = arr[hi + lo >> 1];
+  let i = lo, j = hi, tmp;
   while (i <= j) {
-    while (arr[i] < pivot) i++; while (arr[j] > pivot) j--;
+    while (cp(arr[i], pivot) < 0) ++i;
+    while (cp(arr[j], pivot) > 0) --j;
     i <= j && (tmp = arr[i], arr[i++] = arr[j], arr[j--] = tmp);
   }
-  left < ~-i && quickSort(arr, left, ~-i);
-  i < right && quickSort(arr, i, right);
+  lo < ~-i && quickSort(arr, cp, lo, ~-i);
+  i < hi && quickSort(arr, cp, i, hi);
 }
 
-const MIN_MERGE = 32;
- 
-function minRunLength(n) {
-  // Becomes 1 if any 1 bits are shifted off
-  let r = 0;
-  while (n >= MIN_MERGE) r |= n & 1, n >>= 1;
-  return n + r;
+function introSort(
+  arr, cp, lo = 0, hi = ~-arr.length,
+  lim = Math.log(arr.length) / Math.LN2 << 1
+) {
+  if (hi - lo <= 16) return insertionSort(arr, cp, lo, hi);
+  if (lim === 0) return heapSort(arr, cp, lo, hi);
+  const pivot = arr[hi + lo >> 1];
+  let i = lo, j = hi, tmp;
+  while (i <= j) {
+    while (cp(arr[i], pivot) < 0) ++i;
+    while (cp(arr[j], pivot) > 0) --j;
+    i <= j && (tmp = arr[i], arr[i++] = arr[j], arr[j--] = tmp);
+  }
+  lo < ~-i && introSort(arr, cp, lo, ~-i, ~-lim);
+  i < hi && introSort(arr, cp, i, hi, ~-lim);
 }
- 
-// This function sorts array from left index to
-// to right index which is of size atmost RUN
-function insertionSort(arr, left, right) {
-  for(let i = left + 1; i <= right; ++i) {
-    let curr = arr[i], j = i - 1;
-    while (j >= left && arr[j] > curr) arr[j + 1] = arr[j--];
-    arr[j + 1] = curr;
+
+function insertionSort(arr, cp, lo = 0, hi = ~-arr.length) {
+  for(let i = lo; i <= hi; ++i) {
+    let pivot = arr[i], j = i;
+    while (j >= lo && cp(arr[~-j], pivot) > 0) arr[j] = arr[--j];
+    arr[j] = pivot;
   }
 }
- 
-// Merge function merges the sorted runs
-function merge(arr, lo, mid, hi) {
-  // Original array is broken in two parts, left and right array
-  const lenLeft = mid - lo + 1, lenRight = hi - mid;
-  const left = Array(lenLeft), right = Array(lenRight);
-  for (let i = 0; i < lenLeft; ++i) left[i] = arr[lo + i];
-  for (let i = 0; i < lenRight; ++i) right[i] = arr[mid + 1 + i];
-  let i = 0, j = 0, k = lo;
-  // After comparing, we merge those two array in larger sub array
-  while (i < lenLeft && j < lenRight) {
-    if (left[i] <= right[j]) arr[k] = left[i++];
-    else arr[k] = right[j++];
-    k++;
+
+function heapSort(arr, cp, lo = 0, hi = ~-arr.length) {
+  const n = -~hi - lo;
+  let start = ~-lo + (n >> 1), end = hi, tmp;
+  while (start >= lo) heapify(arr, cp, start--, hi, lo);
+  while (end > lo) {
+    tmp = arr[end], arr[end] = arr[lo], arr[lo] = tmp;
+    heapify(arr, cp, lo, --end, lo);
   }
-  // Copy remaining elements of left, if any
-  while (i < lenLeft) arr[k++] = left[i++];
-  // Copy remaining element of right, if any
-  while (j < lenRight) arr[k++] = right[j++];
 }
- 
-// Iterative Timsort function to sort the
-// array[0...n-1]. (similar to merge sort)
-function timSort(arr) {
-  const len = arr.length, minRun = minRunLength(MIN_MERGE);
-  // Sort individual subarrays of size RUN
-  for (let i = 0; i < len; i += minRun) {
-    insertionSort(arr, i, Math.min(i + MIN_MERGE - 1, len - 1));
-  }
-  // Start merging from size RUN (or 32). It will
-  // merge to form size 64, then 128, 256 and so on
-  for (let size = minRun; size < len; size <<= 1) {
-    // Pick starting point of left sub array. We are going to merge
-    // arr[left..left+size-1] and arr[left+size, left+2*size-1].
-    // After every merge, we increase left by 2*size.
-    for (let left = 0; left < len; left += size << 1) {
-      // Find ending point of left sub array mid+1
-      // is starting point of right sub array.
-      let mid = left + size - 1;
-      let right = Math.min(left + 2 * size - 1, len - 1);
-      // Merge sub array arr[left.....mid] & arr[mid+1....right].
-      mid < right && merge(arr, left, mid, right);
-    }
+
+function heapify(arr, cp, start, end, left) {
+  let root = start;
+  while (true) {
+    const child = -~left + (root - left << 1);
+    if (child > end) return;
+    let swap = root;
+    cp(arr[swap], arr[child]) < 0 && (swap = child);
+    // rightChild = leftChild + 1;
+    child < end && cp(arr[swap], arr[-~child]) < 0 && (swap = -~child);
+    if (swap === root) return;
+    let tmp = arr[root];
+    arr[root] = arr[swap];
+    arr[root = swap] = tmp;
   }
 }
