@@ -1,5 +1,11 @@
+# Algorithm Battles
+View the results with full color by cloning the repository.
+<details>
+  <summary>POWER</summary>
+
+  Battle details: [code](/battles/power.js)
 ```javascript
-> node app power
+> node battle power
 
 <================15-POWERING================>
 Test case 1:
@@ -58,8 +64,13 @@ Custom Pow x 4.95 ops/sec ±2.99% (17 runs sampled)
 Custom Pow15 x 4.37 ops/sec ±2.39% (15 runs sampled)
 Fastest is Native
 ```
+</details>
+<details>
+  <summary>STRING REPEAT</summary>
+
+  Battle details: [code](/battles/repeat.js)
 ```javascript
-> node app repeat
+> node battle repeat
 
 <================STRING REPETITION================>
 Test case 1:
@@ -78,8 +89,13 @@ Repeat x 7,110,648 ops/sec ±0.69% (88 runs sampled)
 Custom Loop x 5,093,154 ops/sec ±3.24% (84 runs sampled)
 Fastest is Repeat
 ```
+</details>
+<details>
+  <summary>UNDEFINED VALUE</summary>
+
+  Battle details: [code](/battles/undefined.js)
 ```javascript
-> node app undefined
+> node battle undefined
 
 <================UNDEFINED================>
 Benchmark case:
@@ -89,8 +105,13 @@ Typeof x 56,025,717 ops/sec ±0.27% (88 runs sampled)
 Void x 34,255,181 ops/sec ±2.64% (91 runs sampled)
 Fastest is Typeof
 ```
+</details>
+<details>
+  <summary>JSON & YAML</summary>
+
+  Battle details: [code](/battles/yaml.js)
 ```javascript
-> node app yaml
+> node battle yaml
 
 <================JSON VS. YAML================>
 Test case 1:
@@ -275,8 +296,13 @@ JSYAML x 215 ops/sec ±0.91% (82 runs sampled)
 Custom YAML x 1,982 ops/sec ±0.39% (93 runs sampled)
 Fastest is Native JSON
 ```
+</details>
+<details>
+  <summary>QUEUE</summary>
+
+  Battle details: [code](/battles/queue.js)
 ```Javascript
-> node app queue
+> node battle queue
 
 <================SHIFT POP VS. QUEUE================>
 Test case 1:
@@ -367,8 +393,13 @@ Shift Pop x 4,082 ops/sec ±0.32% (90 runs sampled)
 Queue x 3,298 ops/sec ±0.61% (88 runs sampled)
 Fastest is Shift Pop
 ```
+</details>
+<details>
+  <summary>SORT - FLOATS</summary>
+
+  Battle details: [code](/battles/sort.js)
 ```javascript
-> node app sort
+> node battle sort
 
 <================SORT FLOAT NUMBERS================>
 Test case 1:
@@ -595,8 +626,13 @@ QuickSortMed3 x 7.77 ops/sec ±0.12% (24 runs sampled)
 IntroSort x 5.81 ops/sec ±0.86% (19 runs sampled)
 Fastest is QuickSortMed3
 ```
+</details>
+<details>
+  <summary>SORT - INTEGERS</summary>
+
+  Battle details: [code](/battles/sortint.js)
 ```javascript
-> node app sortint
+> node battle sortint
 
 <================SORT 32-BIT UNSIGNED INTEGERS================>
 Test case 1:
@@ -725,3 +761,181 @@ RadixSort x 30.56 ops/sec ±1.03% (53 runs sampled)
 CountingSort x 0.66 ops/sec ±3.29% (6 runs sampled)
 Fastest is RadixSort
 ```
+</details>
+<details>
+  <summary>REDUCE & LOOP</summary>
+
+  Battle details: [code](/battles/reduce.js)
+```javascript
+> node battle reduce
+
+<================REDUCE vs. LOOP================>
+Test case 1:
+[ [
+    19, 14, 48, 45, 40,
+    20, 81, 62, 17,  2 
+  ] ]
+Candidate: For index   
+{
+  '2': null,
+  '14': null,
+  '17': null,
+  '20': null,
+  '40': null,
+  '45': null,
+  '48': null,
+  '62': null,
+  '81': null
+}
+Candidate: For of      
+{
+  '2': null,
+  '14': null,
+  '17': null,
+  '19': null,
+  '20': null,
+  '40': null,
+  '45': null,
+  '48': null,
+  '62': null,
+  '81': null
+}
+Candidate: Reduce
+{
+  '2': null,
+  '14': null,
+  '17': null,
+  '19': null,
+  '20': null,
+  '40': null,
+  '45': null,
+  '48': null,
+  '62': null,
+  '81': null
+}
+Outputs are identical
+Benchmark case:
+[
+  [
+     72, 570, 273, 781, 124, 853, 620, 979, 665, 790, 523, 805,
+    756, 538, 273, 680, 170, 979, 162, 183, 904, 540, 725,   6,
+    304, 638, 225, 840, 478, 102, 908, 324, 398, 422, 523, 537,
+    721, 135,  25, 976, 405, 899, 224, 588,  99, 179, 768,  13,
+      8, 487, 681, 482, 928, 426,  51,  47, 126, 582,  81, 764,
+    420, 419, 581, 794, 582, 911, 427,  31,  68, 185, 321, 219,
+    312, 812, 345, 804, 585, 785, 395,  29,  76, 876, 474, 223,
+    148, 252, 266, 891,  62, 561,  10, 309, 351, 360, 746, 237,
+    891,  17, 578, 810,
+    ... 900 more items
+  ]
+]
+Checking outputs...
+Outputs are identical
+Benchmarking...
+For index x 51,428 ops/sec ±2.31% (85 runs sampled)
+For of x 50,839 ops/sec ±1.69% (90 runs sampled)
+Reduce x 52,854 ops/sec ±7.48% (91 runs sampled)
+Fastest is For index
+Benchmark case:
+[
+  [
+    4333, 3750, 9365, 2409, 7189, 8766, 9803, 7263, 6890, 4281,
+    8815, 1926, 8425,  437, 9865, 6332, 7761, 7440, 8227, 9060,
+    1190, 1782, 4300, 1761, 1631, 8950, 3244, 7458, 3222,  561,
+    9432, 3703,  461, 9994, 1220, 4641, 7203, 7740, 9793, 6581,
+    1557, 3535, 8195, 3936, 3572, 7627, 5495, 7078, 6361, 2373,
+    3059, 6077, 4255, 5648, 6034, 5036, 1794, 6918, 2139, 1196,
+    1752, 3595, 2137, 7432, 4823,  742, 6729, 7384,  398, 2250,
+    1820, 7142, 8027, 9901, 9516, 3699, 8108, 5575, 9714, 3250,
+    5780, 7127,  535, 1839, 7597, 1351,  698, 1358, 8346, 8522,
+     814, 3012, 6825, 1084, 5133, 6803, 9228, 5477, 9630, 4702,
+    ... 9900 more items
+  ]
+]
+Checking outputs...
+Outputs are identical
+Benchmarking...
+For index x 1,388 ops/sec ±1.37% (91 runs sampled)
+For of x 1,360 ops/sec ±0.95% (88 runs sampled)
+Reduce x 1,392 ops/sec ±0.80% (91 runs sampled)
+Fastest is Reduce,For index
+Benchmark case:
+[
+  [
+    59413, 26141, 66596, 79931, 71001, 32911, 12163, 80330,
+     2735, 23824, 30346, 52157, 67627, 41202, 55141, 97167,
+    12738,  7225, 80172, 29582, 98932, 30420, 35931, 64484,
+    11299, 36026, 50365, 23446, 44643, 58708, 51788, 98271,
+    35696, 97842, 59597, 98804, 64625, 49110, 78938, 83303,
+    67448, 94223,  3299, 64526, 44159, 69773, 61202, 27002,
+    23075, 12461, 12914, 30586, 79260, 87236, 32098, 34757,
+    64494, 86264,  3860, 73460, 15235, 18584, 29044, 14450,
+    46282, 65126, 85996, 13845, 71749, 68042, 74367, 42344,
+    81495, 86622, 87983, 42966, 28628, 62571, 60251, 12764,
+    28716, 97530, 32212, 25808, 29400, 91641, 88873, 61912,
+    27214, 71316, 98122, 33663, 87237, 91546, 72696, 59303,
+    98516,  7272, 41198, 76642,
+    ... 99900 more items
+  ]
+]
+Checking outputs...
+Outputs are identical
+Benchmarking...
+For index x 82.53 ops/sec ±4.05% (69 runs sampled)
+For of x 88.85 ops/sec ±1.55% (74 runs sampled)
+Reduce x 85.39 ops/sec ±1.73% (71 runs sampled)
+Fastest is For of
+Benchmark case:
+[
+  [
+    955, 539, 711, 226,  80, 414, 978, 745, 901,  45, 294, 652,
+    407, 252, 921, 288, 437, 306,  69, 335, 839, 647,  13, 305,
+     15, 407,  15, 323, 932, 209, 450, 490, 468, 368, 258, 171,
+    277, 887, 750, 864, 336, 849, 905, 878, 181, 895, 407, 433,
+    828, 559, 648, 649, 173,  32,  55, 183, 141, 208, 780, 917,
+    985, 280, 794, 980, 931, 887, 283, 694, 196, 564, 966, 300,
+    360, 788, 227, 962, 207, 931,   2, 349, 265, 786,  99, 594,
+     43, 454, 954, 144, 677, 736,  54, 787, 360, 935, 442, 784,
+    581, 406, 449, 703,
+    ... 99900 more items
+  ]
+]
+Checking outputs...
+Outputs are identical
+Benchmarking...
+For index x 806 ops/sec ±1.31% (89 runs sampled)
+For of x 741 ops/sec ±1.28% (88 runs sampled)
+Reduce x 874 ops/sec ±0.88% (89 runs sampled)
+Fastest is Reduce
+Benchmark case:
+[
+  [
+    106864951, 739042687,  75708831, 919580254, 486657800, 216361120,    
+    677882183, 352280587, 787512093, 676018267,  36146334, 764336754,    
+     82311973, 994823475, 257463892, 767118154, 971878349, 148256313,    
+    692203691, 365331743, 205140691, 726499655,  52280604, 475286222,    
+    639279347, 521290347, 576106514, 940764297, 630851717, 657557842,    
+    812817675, 946525996, 498891517, 164411623, 597120381, 985396065,    
+    334045075, 347378366, 332813900, 327086731, 225625663, 244478384,    
+    997150299, 775638822, 860742199, 713428578, 424512389, 418447100,    
+     18457056, 595071789, 311272004, 232010713,  80198571, 997479656,    
+    336670845, 423282119, 154161824, 712267398, 905927833, 658042309,    
+    862851331, 870982607, 189088661, 732980457, 491345639, 438005175,    
+    882585040, 956681657, 284985228, 316388360, 685005393,  56505911,    
+    155232015, 181448582,  38736105, 753812898, 476078473, 411959149,    
+    927666425, 649058835, 524947858, 891334626, 716200332,  42995494,    
+    421736698, 197887697, 432902839,  22988957,  21467379, 778050516,    
+    686963490, 761772475, 755143366, 429324202, 580857422,  52569741,    
+    255117398, 598032812, 288755127, 184898018,
+    ... 99900 more items
+  ]
+]
+Checking outputs...
+Outputs are identical
+Benchmarking...
+For index x 26.52 ops/sec ±2.23% (47 runs sampled)
+For of x 27.04 ops/sec ±1.71% (48 runs sampled)
+Reduce x 26.14 ops/sec ±3.09% (47 runs sampled)
+Fastest is For of,For index,Reduce
+```
+</details>
