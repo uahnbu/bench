@@ -1,4 +1,4 @@
-const { setModel, addTest, addBenchmark, randInt } = require('../ground');
+const { Arr, setModel, addTest, addBenchmark, randInt } = require('../ground');
 
 module.exports = {
   opening: 'REDUCE vs. LOOP',
@@ -21,11 +21,11 @@ module.exports = {
   },
   buildTest() {
     setModel();
-    addTest(Array(10).fill().map(() => randInt(0, 100)));
-    addBenchmark(Array(1e3).fill().map(() => randInt(0, 1e3)));
-    addBenchmark(Array(1e4).fill().map(() => randInt(0, 1e4)));
-    addBenchmark(Array(1e5).fill().map(() => randInt(0, 1e5)));
-    addBenchmark(Array(1e5).fill().map(() => randInt(0, 1e3)));
-    addBenchmark(Array(1e5).fill().map(() => randInt(0, 1e9)));
+    addTest(Arr(10, _ => randInt(0, 100)));
+    addBenchmark(Arr(1e3, _ => randInt(0, 1e3)));
+    addBenchmark(Arr(1e4, _ => randInt(0, 1e4)));
+    addBenchmark(Arr(1e5, _ => randInt(0, 1e5)));
+    addBenchmark(Arr(1e5, _ => randInt(0, 1e3)));
+    addBenchmark(Arr(1e5, _ => randInt(0, 1e9)));
   }
 };

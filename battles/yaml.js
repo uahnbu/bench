@@ -1,4 +1,5 @@
 const {
+  Arr,
   setModel,
   addTest,
   addBenchmark,
@@ -41,16 +42,8 @@ module.exports = {
     ];
     test1.push({ loop: test1 }, test1);
     addTest(test1);
-    addTest(
-      Math.random() < .5
-        ? Array(3).fill().map(() => generate(3, 3))
-        : generate(3, 5)
-    );
-    addBenchmark(
-      Math.random() < .5
-        ? Array(9).fill().map(() => generate(4, 4))
-        : generate(5, 9)
-    );
+    addTest(Math.random() < .5 ? Arr(3, _ => gen(3, 3)) : gen(3, 5));
+    addBenchmark(Math.random() < .5 ? Arr(9, _ => gen(4, 4)) : gen(5, 9));
   }
 };
 
@@ -105,7 +98,7 @@ function yamlify(node, tab = 2) {
   }
 }
 
-function generate(size, depth, lvl = 0, obj = {}) {
+function gen(size, depth, lvl = 0, obj = {}) {
   if (lvl === depth) return obj;
   for (let i = 0; i < size; i++) {
     obj[randStr(5)] = rand(1e5, 1e9, 9, size, depth, lvl);
@@ -124,6 +117,6 @@ function rand(min, max, len, size, depth, lvl) {
       );
     default:
       if (lvl === depth) return randStr(len);
-      return generate(size, depth, lvl + 1);
+      return gen(size, depth, lvl + 1);
   }
 }

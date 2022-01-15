@@ -1,4 +1,4 @@
-const { setModel, addTest, addBenchmark, randInt } = require('../ground');
+const { Arr, setModel, addTest, addBenchmark, randInt } = require('../ground');
 
 module.exports = {
   opening: 'SHIFT POP VS. QUEUE',
@@ -24,22 +24,10 @@ module.exports = {
   },
   buildTest() {
     setModel();
-    addTest(
-      Array(10).fill()
-        .map(() => [Math.random() < .5, randInt(-100, 100)])
-    );
-    addBenchmark(
-      Array(1e4).fill()
-        .map(() => [Math.random() < .5, randInt(-1e15, 1e15)])
-    );
-    addBenchmark(
-      Array(1e5).fill()
-        .map(() => [Math.random() < .5, randInt(-1e15, 1e15)])
-    );
-    addBenchmark(
-      Array(1e5).fill()
-        .map(() => [Math.random() < .5, randInt(-1e5, 1e5)])
-    );
+    addTest(Arr(10, _ => [Math.random() < .5, randInt(-100, 100)]));
+    addBenchmark(Arr(1e4, _ => [Math.random() < .5, randInt(-1e15, 1e15)]));
+    addBenchmark(Arr(1e5, _ => [Math.random() < .5, randInt(-1e15, 1e15)]));
+    addBenchmark(Arr(1e5, _ => [Math.random() < .5, randInt(-1e5, 1e5)]));
   }
 };
 

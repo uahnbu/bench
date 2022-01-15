@@ -1,4 +1,4 @@
-const { setModel, addTest, addBenchmark, randInt } = require('../ground');
+const { Arr, setModel, addTest, addBenchmark, randInt } = require('../ground');
 const TimSort = require('timsort');
 
 module.exports = {
@@ -32,11 +32,11 @@ module.exports = {
   },
   buildTest() {
     setModel();
-    addTest(Array(10).fill().map(() => randInt(0, 1e5)));
-    addBenchmark(Array(100).fill().map(() => randInt(0, 1e3)));
-    addBenchmark(Array(1e3).fill().map(() => randInt(0, 1e3)));
-    addBenchmark(Array(1e5).fill().map(() => randInt(0, 1e5)));
-    addBenchmark(Array(1e6).fill().map(() => randInt(0, 2e9)));
+    addTest(Arr(10, _ => randInt(0, 1e5)));
+    addBenchmark(Arr(100, _ => randInt(0, 1e3)));
+    addBenchmark(Arr(1e3, _ => randInt(0, 1e3)));
+    addBenchmark(Arr(1e5, _ => randInt(0, 1e5)));
+    addBenchmark(Arr(1e6, _ => randInt(0, 2e9)));
   }
 };
 

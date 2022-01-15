@@ -9,6 +9,7 @@ function setModel(...args) {
   model.push(...args);
 }
 
+function Arr(len, fn) { return Array(len).fill().map(fn) }
 function addTest(data) { addCase(tests, data) }
 function addBenchmark(data) { addCase(benchmarks, data) }
 function getTests() { return tests }
@@ -91,6 +92,7 @@ function runCheck(candidates, args, verbose) {
 }
 
 module.exports = {
+  Arr,
   setModel,
   addTest,
   getTests,
