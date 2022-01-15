@@ -1,4 +1,5 @@
 const {
+  Arr,
   setModel,
   addTest,
   addBenchmark,
@@ -20,6 +21,11 @@ module.exports = {
       TimSort.sort(clone, (a, b) => b - a);
       return clone;
     },
+    'RadixSort': nums => {
+      const clone = [...nums];
+      radixSort(clone, true);
+      return clone;
+    },
     'QuickSortOld': nums => {
       const clone = [...nums];
       quickSortOld(clone, (a, b) => b - a);
@@ -27,6 +33,7 @@ module.exports = {
     },
     'QuickSort': nums => {
       const clone = [...nums];
+      // quickSortMid(clone, (a, b) => b - a);
       quickSortMid(clone, (a, b) => b - a);
       return clone;
     },
@@ -43,31 +50,27 @@ module.exports = {
   },
   buildTest() {
     setModel();
-    addTest(Array(100).fill().map(() => randInt(-100, 100)));
-    addTest(Array(100).fill().map(() => randInt(-100, 100)));
+    addTest(Arr(100, _ => randInt(-100, 100)));
+    addTest(Arr(100, _ => randInt(-100, 100)));
     // Ascending
-    addTest(
-      Array(10).fill()
-        .map(() => randInt(-1e5, 1e5))
-        .sort((a, b) => a - b)
-    );
+    addTest(dummySort(Arr(10, _ => randInt(-1e5, 1e5)), (a, b) => a - b));
     // Descending saw
-    const test4 = Array(100).fill().map(() => randInt(-100, 100));
+    const test4 = Arr(100, _ => randInt(-100, 100));
     for (let i = 0, t; i < test4.length - 1;) {
       const right = Math.min(test4.length - 1, i + randInt(1, 10));
       dummySort(test4, (a, b) => b - a, i, i = right);
     }
     addTest(test4);
-    addBenchmark(Array(50).fill().map(() => randInt(-1e3, 1e3)));
-    addBenchmark(Array(1e6).fill().map(() => randFloat(-1e15, 1e15)));
+
+    addBenchmark(Arr(100, _ => randInt(-1e3, 1e3)));
+    addBenchmark(Arr(1e3, _ => randInt(-1e3, 1e3)));
+    addBenchmark(Arr(1e5, _ => randInt(-1e5, 1e5)));
+    addBenchmark(Arr(1e6, _ => randInt(-2e9, 2e9)));
+    addBenchmark(Arr(1e6, _ => randFloat(-1e15, 1e15)));
     // Ascending
-    addBenchmark(
-      Array(1e6).fill()
-        .map(() => randInt(-1e5, 1e5))
-        .sort((a, b) => a - b)
-    );
+    addBenchmark(dummySort(Arr(1e6, _ => randInt(-2e9, 2e9)), (a, b) => a - b));
     // Descending saw
-    const test8 = Array(1e6).fill().map(() => randFloat(-1e15, 1e15));
+    const test8 = Arr(1e6, _ => randInt(-2e9, 2e9));
     for (let i = 0, t; i < test4.length - 1;) {
       const right = Math.min(test8.length - 1, i + randInt(1e3, 1e5));
       dummySort(test8, (a, b) => b - a, i, i = right);
@@ -89,6 +92,38 @@ function dummySort(arr, cp, lo = 0, hi = ~-arr.length) {
   tmp = arr[pivot], arr[pivot] = arr[hi], arr[hi] = tmp;
   lo < ~-pivot && dummySort(arr, cp, lo, ~-pivot);
   -~pivot < hi && dummySort(arr, cp, -~pivot, hi);
+  return arr;
+}
+
+function radixSort(arr, descending) {
+  const count = Array(256);
+  let curr = Array(arr.length), prev = arr;
+  for (let shift = 0; shift < 32; shift += 8) {
+    for (let i = 0; i < 256; ++i) count[i] = 0;
+    for (let i = 0; i < prev.length; ++i) ++count[prev[i] >> shift & 255];
+    for (let i = 1; i < 256; ++i) count[i] += count[~-i];
+    for (let i = ~-prev.length; i !== -1; --i) {
+      curr[--count[prev[i] >> shift & 255]] = prev[i];
+    }
+    [prev, curr] = [curr, prev];
+  }
+  if (arr[~-arr.length] < 0) {
+    let lo = 0, hi = ~-arr.length, mid;
+    while (lo < hi) {
+      if (arr[mid = lo + hi >> 1] >= 0) lo = -~mid;
+      else hi = mid, arr[~-mid] >= 0 && (lo = mid);
+    }
+    reverse(arr, 0, ~-lo),
+    reverse(arr, lo, ~-arr.length);
+  }
+  !descending && reverse(arr, 0, ~-arr.length);
+  function reverse(arr, lo, hi) {
+    while (lo < hi) {
+      const tmp = arr[lo];
+      arr[lo++] = arr[hi],
+      arr[hi--] = tmp;
+    }
+  }
 }
 
 // QuickSort is unstable.
