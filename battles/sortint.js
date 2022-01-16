@@ -33,10 +33,13 @@ module.exports = {
   buildTest() {
     setModel();
     addTest(Arr(10, _ => randInt(0, 1e5)));
-    addBenchmark(Arr(100, _ => randInt(0, 1e3)));
+    addTest(Arr(10, _ => randInt(-1e5, 1e5)));
+    addBenchmark(Arr(100, _ => randInt(-1e3, 1e3)));
     addBenchmark(Arr(1e3, _ => randInt(0, 1e3)));
-    addBenchmark(Arr(1e5, _ => randInt(0, 1e5)));
-    addBenchmark(Arr(1e6, _ => randInt(0, 2e9)));
+    addBenchmark(Arr(1e3, _ => randInt(-1e3, -1)));
+    addBenchmark(Arr(1e3, _ => randInt(-1e3, 1e3)));
+    addBenchmark(Arr(1e5, _ => randInt(-1e5, 1e5)));
+    addBenchmark(Arr(1e6, _ => randInt(-2e9, 2e9)));
   }
 };
 
@@ -54,7 +57,7 @@ function quickSort(arr, cp, lo = 0, hi = ~-arr.length) {
   -~pivot < hi && quickSort(arr, cp, -~pivot, hi);
 }
 
-function radixSort(arr) {
+function radixSort(arr, desc) {
   const count = Array(256);
   let curr = Array(arr.length), prev = arr;
   for (let shift = 0; shift < 32; shift += 8) {
@@ -65,6 +68,24 @@ function radixSort(arr) {
       curr[--count[prev[i] >> shift & 255]] = prev[i];
     }
     [prev, curr] = [curr, prev];
+  }
+  if (arr[0] < 0 || arr[~-arr.length] >= 0) {
+    return desc && reverse(arr, 0, ~-arr.length);
+  }
+  let lo = 0, hi = ~-arr.length, mid;
+  while (lo < hi) {
+    if (arr[mid = lo + hi >> 1] >= 0) lo = -~mid;
+    else hi = mid, arr[~-mid] >= 0 && (lo = mid);
+  }
+  reverse(arr, 0, ~-lo),
+  reverse(arr, lo, ~-arr.length);
+  !desc && reverse(arr, 0, ~-arr.length);
+  function reverse(arr, lo, hi) {
+    while (lo < hi) {
+      const tmp = arr[lo];
+      arr[lo++] = arr[hi],
+      arr[hi--] = tmp;
+    }
   }
 }
 
